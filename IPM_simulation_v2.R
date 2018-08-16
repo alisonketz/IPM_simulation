@@ -1,6 +1,6 @@
 
-###
-### Dam Walsh AAH IPM simulation code
+### IPM simulation based on
+### Dam Walsh's AAH IPM simulation code
 ###
 
 setwd("~/Documents/IPM/IPM_simulation")
@@ -35,45 +35,38 @@ cores<-detectCores()
 
 
 #hunting season begins 2017-09-16,2018-09-15
-yday("2017-09-16")
-yday("2017-09-29")#Date of hunting season begins
+yday("2017-09-16") #259
+yday("2018-09-15") #285
+yday("2017-09-29")#Date of hunting season begins, #272
 
 #
 #
 
 haz.gen<-function(prob,ratioh2nh){
   overall.haz <- -log(prob)
-  haz.nonhunt <- ((1/(272+(365-272)*ratioh2nh))*overall.haz) #nonhunting hazard - daily
+  haz.nonhunt <- ((1/(259+(365-259)*ratioh2nh))*overall.haz) #nonhunting hazard - daily
   haz.hunt <- haz.nonhunt*ratioh2nh #hunting hazard - daily
   return(list(hunt = haz.hunt, nonhunt = haz.nonhunt))
 }
 
-Sage <- c(0.4,0.5,0.55,0.65,0.7) #annual survival by age class(0,1,..,3,4+)
+num_ageclass = 13
+Sage <- c(0.5,seq(.7,.81,by=.01)) #annual survival by age class(0,1,2,...,11,12+)
+length(Sage) #must equal num_ageclass
 
-haz.young<-haz.gen(Sage[1],15) #annual survival young-of-the year
-
-haz.adult1<-haz.gen(Sage[2],20) #annual survival probability -
-## adult 1 yrs
-haz.adult2<-haz.gen(Sage[3],15)
-
-haz.adult3<-haz.gen(Sage[4],10)
-
-haz.old <-haz.gen(Sage[5],2)  #annual survival probability
-## adult >4yrs
-
-hazmale <- rbind(c(haz.young$nonhunt,haz.adult1$nonhunt,haz.adult2$nonhunt,
-                   haz.adult3$nonhunt, haz.old$nonhunt),
-                 c(haz.young$hunt,haz.adult1$hunt,haz.adult2$hunt,
-                   haz.adult3$hunt, haz.old$hunt))
+hazmale=matrix(NA,2,num_ageclass)#first row is nonhunt, secondrow is hunt hazard
+for(i in 1:(num_ageclass-1)){
+  hazmale[,i]=unlist(haz.gen(Sage[i],sample(10:20,1,replace=T)))[2:1]
+}
+hazmale[,13]=unlist(haz.gen(Sage[i],2))[2:1]
 hazfemale<-hazmale
 Shazf<-hazfemale  #Survival for hunting and non-hunting periods
 
-for(i in 1:ncol(hazfemale)){
+for(i in 1:num_ageclass){
   Shazf[1,i]<-exp(-hazfemale[1,i]*272)
   Shazf[2,i]<-exp(-hazfemale[2,i]*(365-272))
 }
 
-fecundity<-c(0,0,0.95,0.95,0.95) #birth prob for yr(0,1,2-3,>4)
+fecundity<-c(0,0,0.95,0.95,0.95) #birth prob for yr(0,1,2-11,12+)
 nfawnprob<-c(0.05,0.5,0.4,0.05) #number fawns probabilities
 
 Ninit.male<-c(20380,5661,2441,1538,868) #initial pop. sizes
