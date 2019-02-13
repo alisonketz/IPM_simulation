@@ -91,8 +91,8 @@ List nxtyr(const vec Nmale, const vec Nfemale, const mat hazmale, const mat hazf
 
 	mat Npremale(years,Nmale.n_elem,fill::zeros); //pre-hunt male population
 	mat Nprefemale(years,Nfemale.n_elem,fill::zeros); //pre-hunt female population
-	mat Npostmale(years,Nmale.n_elem,fill::zeros); //post-hunt male population at end of biological year (4/14)
-	mat Npostfemale(years,Nfemale.n_elem,fill::zeros); //post-hunt female population at end of biological year (4/14)
+	mat Npostmale(years,Nmale.n_elem,fill::zeros); //post-hunt male population at end of biological year (5/14)
+	mat Npostfemale(years,Nfemale.n_elem,fill::zeros); //post-hunt female population at end of biological year (5/14)
 	
 	double mfawn=0;  //male fawns
 	double ffawn=0;  //female fawns
@@ -142,14 +142,14 @@ for(int kk=0;kk<years;++kk)	{
 			#pragma omp for
 			for(uword j = 0; j<test1.n_elem; ++j){
 				if(kk>0){ //year 1 use initial values for prehunt populations
-					if(test1(j) <= 169.0){  //Survive from 4/15 to 10/1 //Need 169.0 so returns double rather than integer (i.e., 0)
+					if(test1(j) <= 123.0){  //Survive from 5/15 to 9/15 //Need 169.0 so returns double rather than integer (i.e., 0)
 						continue; //skip to next individual because of death
 					}else{
 						Npremale(kk,i) = Npremale(kk,i)+1;
 					}
 				}
 					
-				if(test2(j) <= 92.0){ //Harvested during hunting season
+				if(test2(j) <= 113.0){ //Harvested during hunting season, from 9/16 to 1/6 of the following year
 
 						harvestm(kk,i) = harvestm(kk,i)+1;
 						if(as_scalar(randu(1)) <= report){
@@ -161,7 +161,7 @@ for(int kk=0;kk<years;++kk)	{
 						continue;
  				}
 				
-				if(test3(j) > 104.0){ //Survive from 1/1 to 4/15
+				if(test3(j) > 129.0){ //Survive from 1/7 to 5/14
 					Npostmale(kk,i) = Npostmale(kk,i)+1;
 				}
 			}
@@ -187,13 +187,13 @@ for(int kk=0;kk<years;++kk)	{
 					}
 				}
 				if(kk > 0){
-					if(test4(j) <= 169.0){  
+					if(test4(j) <= 123.0){  
 						continue;
-					}else{ //Survive from 4/15 to 10/1
+					}else{ //Survive from 5/15 to 9/15
 						Nprefemale(kk,i) = Nprefemale(kk,i)+1;
 					}
 				}
-				if(test5(j) <= 92.0){ //Harvested during hunting season
+				if(test5(j) <= 113.0){ //Harvested during hunting season
 						harvestf(kk,i) = harvestf(kk,i)+1;
 						if(as_scalar(randu(1)) <= report){
 							oharvest(kk,1) = oharvest(kk,1)+1;
@@ -203,7 +203,7 @@ for(int kk=0;kk<years;++kk)	{
 						}
 						continue;
   					}
-				if(test6(j) > 104.0){ //Survive from 1/1 to 4/15
+				if(test6(j) > 129.0){ //Survive from 1/7 to 5/15
 						Npostfemale(kk,i) = Npostfemale(kk,i)+1;
 					}
 			}
@@ -263,14 +263,14 @@ for(int kk=0;kk<years;++kk)	{
 			#pragma omp for
 			for(uword j = 0; j<test7.n_elem; ++j){
 				if(kk > 0){
-					if(test7(j) <= (274-bdateusem(j))){  //Survive from birth to 10/1
+					if(test7(j) <= (259-bdateusem(j))){  //Survive from birth to 9/11
 						continue;
 					}else{
 						Npremale(kk,0) = Npremale(kk,0)+1;
 					}
 				}
 				
-				if(test8(j) <= 92.0){ //Harvested during hunting season
+				if(test8(j) <= 113.0){ //Harvested during hunting season
 						harvestm(kk,0) = harvestm(kk,0)+1;
 						if(as_scalar(randu(1)) <= report){
 							
@@ -283,7 +283,7 @@ for(int kk=0;kk<years;++kk)	{
 						}
 						continue;
   				}
-				if(test9(j) > 104.0){ //Survive from 1/1 to 4/15
+				if(test9(j) > 129.0){ //Survive from 1/7 to 5/14
 								Npostmale(kk,0) = Npostmale(kk,0)+1;
 							}
 			}
@@ -299,13 +299,13 @@ for(int kk=0;kk<years;++kk)	{
 			#pragma omp for	
 			for(uword j=0; j<test10.n_elem; ++j){
 				if(kk > 0){	
-					if(test10(j) <= (274-bdateusef(j))){  //Survive from birth to 10/1
+					if(test10(j) <= (259-bdateusef(j))){  //Survive from birth to 10/1
 						continue;
 					}else{
 						Nprefemale(kk,0) = Nprefemale(kk,0)+1;
 					}
 				}
-				if(test11(j) <= 92.0){ //Harvested during hunting season
+				if(test11(j) <= 113.0){ //Harvested during hunting season
 					harvestf(kk,0) = harvestf(kk,0)+1;
 					if(as_scalar(randu(1)) <= report){
 						oharvest(kk,1) = oharvest(kk,1)+1;
@@ -315,7 +315,7 @@ for(int kk=0;kk<years;++kk)	{
 					}
 						continue;
   					}
-				if(test12(j) > 104.0){ //Survive from 1/1 to 4/15
+				if(test12(j) > 129.0){ //Survive from 1/7 to 5/14
 						Npostfemale(kk,0) = Npostfemale(kk,0)+1;
 					}
 			}
